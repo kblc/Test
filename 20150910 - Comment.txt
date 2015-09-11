@@ -1,0 +1,47 @@
+######################## Customer
+Developer d2
+-- Did not solve the task! Calculations are wrong.
+-- Did not solve the task! There are no tests. 
+++ Code is efficient in terms of speed
+-  made assumptions about the problem domain without making sure they are correct
+-  over-complicating with LinQ, code is not maintainable
+
+Legend:
+++ Very Positive
++ Positive
++- Neutral
+- Negative
+-- Very negative/Not acceptable
+
+Summing up 
+d2 would need to implement the correct calculation and of course would need to test it properly. 
+Seeing the very LINQ-heavy code, there is a chance that the good performance is simply by chance.
+So I would like to see the implementation of FetchData with minimal usage of LINQ (e.g. no joins).
+#################################
+
+####################### Developer
+Can you tell me more about test task "Mean rate of a patient's growth per each doctor"? 
+Current implementation is "Mean rate of a patient's growth per measurement per each doctor". 
+Did you mean "Mean rate of a patient's growth per day/month/year per each doctor" or something else?
+#################################
+
+######################## Customer
+I don't understand "Mean rate of a patient's growth per measurement per each doctor" as he states. 
+A patient cannot grow during one measurement. The problem with these kind of statements is that they are 
+always open to some kind of interpretation. I would like to set some more context to the task and describe 
+the "Mean rate of a patient's growth per each doctor"
+
+Please keep in mind that this is still a test task so there is no real use case for this kind of calculation.
+Imagine there exists a clinical trial who is testing a new medicine designed to help persons with a hormonal 
+disorder which prevents them from growing normally as a teenager. A total of 50 specialized hospitals all over
+the world are selected to each recruit around 50 patients and test the new drug on them. Patients (mainly teenagers)
+will be treated with the medicine and will be followed up every month over a period of 5 years. On every visit 
+(so every month) the height will be measured of the subjects and the primary outcome of the clinical trial is the
+weekly growth rate.
+Our system designed to access the data set of the sponsor (the pharma company conducting the trial) and check the
+data for plausibility, fraud or quality issues. For this we derive a lot of new metrics from the existing data.
+One of this metrics is the average growth rate of a site. How much did each patient grow per week on average for 
+each doctor/site.
+The calculated value will be used for several risk assessments later in the pipeline. 
+I hope that this scenario is helping you.
+#################################

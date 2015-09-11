@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestTaskMainProject", "TestTaskMainProject\TestTaskMainProject.csproj", "{893EFCB3-15A2-4F26-966B-728606EEB840}"
 EndProject
@@ -20,6 +20,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalysisModuleTaskXTests", "AnalysisModuleTaskXTests\AnalysisModuleTaskXTests.csproj", "{2F3105CA-2531-461E-A9AE-9EC33D859CB7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestTaskXMainProject", "TestTaskXMainProject\TestTaskXMainProject.csproj", "{B80C24DF-5C91-4AD3-A5A9-D470780A29FF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{EF540BCF-E37F-416F-8739-0EBB3597AEEE}"
+	ProjectSection(SolutionItems) = preProject
+		20150910 - Comment.txt = 20150910 - Comment.txt
+		Cyntegrity Test Task Ver 2.0_Redacted.pdf = Cyntegrity Test Task Ver 2.0_Redacted.pdf
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
