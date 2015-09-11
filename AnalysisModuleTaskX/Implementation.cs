@@ -25,7 +25,8 @@ namespace AnalysisModuleTaskX
 
         public Implementation()
         {
-            CalculationType = CalculationType.ByPacient;
+            CalculationType = CalculationType.ByDoctor;
+            CalculationTimeType = CalculationTimeType.PerWeek;
             ExcludeDoctorsWithotPacients = false;
             ExcludePacientsWithoutMeasurements = true;
         }
@@ -42,6 +43,10 @@ namespace AnalysisModuleTaskX
         /// Calculate average data by each doctor or by each doctor's pacient
         /// </summary>
         public CalculationType CalculationType { get; set; }
+        /// <summary>
+        /// Calculate results by any part of year (year/month/week/day)
+        /// </summary>
+        public CalculationTimeType CalculationTimeType { get; set; }
 
         private InternalData data = null;
         public void FetchData(DataStore.MainInterface dataStore)
@@ -49,82 +54,36 @@ namespace AnalysisModuleTaskX
             if (dataStore == null)
                 throw new ArgumentNullException("dataStore");
 
-            data = new InternalData()
-            {
-                //Get all doctors to data store
-                Doctors = dataStore.Entities
-                            .Where(e => IsDoctor(e))
-                            .Select(e => new InternalDataDoctor() { DoctorId = e.Id })
-                            .ToArray()
-            };
+            var d = new InternalData();
 
-            //Get pacient for each doctor (Prepare array for quick selection after)
-            var allPacientsForAllDoctors = dataStore.Relations
-                    .Where(r => IsDoctor(r.Item1) && IsPacient(r.Item2))
-                    .Select(r => new { DoctorId = r.Item1.Id, PacientId = r.Item2.Id })
-                    .ToArray();
-            //Fill pacients for each doctor in data store
-            foreach(var d in data.Doctors)
-            {
-                d.Pacient = allPacientsForAllDoctors
-                    .Where(i => i.DoctorId == d.DoctorId)
-                    .Select(i => new InternalDataPacient() { PacientId = i.PacientId })
-                    .ToArray();
-            }
+            d.Doctors = dataStore.Entities
+                .Where(e => IsDoctor(e))
+                .Select(e => new InternalDataDoctor() { DoctorId = e.Id })
+                .ToArray();
+            d.Pacients = dataStore.Relations
+                .Where(r => IsDoctor(r.Item1) && IsPacient(r.Item2))
+                .Select(r => new InternalDataPacient() { DoctorId = r.Item1.Id, PacientId = r.Item2.Id })
+                .ToArray();
+            d.Measurements = dataStore.Relations
+                .Where(r => IsPacient(r.Item1) && IsMeasurement(r.Item2))
+                .Select(r => new InternalDataMeasurement() { PacientId = r.Item1.Id, MeasurementId = r.Item2.Id })
+                .ToArray();
+            var dmIds = d.Measurements.Select(m => m.MeasurementId).ToList();
 
-            //Get all measurements for each pacient for each doctor
-            var allMeasurementForAllPacients = dataStore.Relations
-                    .Where(r => IsPacient(r.Item1) && IsMeasurement(r.Item2))
-                    .Select(r => new 
-                        { 
-                            PacientId = r.Item1.Id, 
-                            MeasurementId = r.Item2.Id
-                        })
-                    //For increase speed use some joins
-                    .LeftOuterJoin(dataStore.HeightComponents, i => i.MeasurementId, hc => hc.EntityId, (i, hc) => new { i.PacientId, i.MeasurementId, HeightComponent = hc })
-                    .LeftOuterJoin(dataStore.TimestampComponents, i => i.MeasurementId, tc => tc.EntityId, (i, tc) => new { i.PacientId, i.MeasurementId, i.HeightComponent, TimestampComponent = tc })
-                    .ToArray();
-            //Fill measurements for each pacient id data store
-            foreach (var d in data.Doctors)
-                foreach(var p in d.Pacient)
-                {
-                    p.Measurements = allMeasurementForAllPacients
-                        .Where(i => i.PacientId == p.PacientId)
-                        .Select(i => new InternalDataMeasurement()
-                        {
-                            MeasurementId = i.MeasurementId,
-                            IsMissing = i.HeightComponent == null || i.TimestampComponent == null || i.HeightComponent.IsMissing || i.TimestampComponent.IsMissing,
-                            Timestamp = i.TimestampComponent != null ? i.TimestampComponent.Timestamp : DateTime.MinValue,
-                            Height = i.HeightComponent != null ? (i.HeightComponent.Unit == DataStore.LengthUnit.Inch ? i.HeightComponent.Value : i.HeightComponent.Value * 39.37) : 0,
-                        })
-                        .ToArray();
+            d.Timestamps = dataStore.TimestampComponents
+                .Where(ts => !ts.IsMissing)
+                .Join(dmIds, tc => tc.EntityId, i => i, (ts, i) => ts) //Join too fast then [array].Contains()
+                //.Where(ts => dmIds.Contains(ts.EntityId))
+                .Select(ts => new InternalDataTimestamp() { MeasurementId = ts.EntityId, Timestamp = ts.Timestamp })
+                .ToArray();
+            d.HeighComponent = dataStore.HeightComponents
+                .Where(h => !h.IsMissing)
+                .Join(dmIds, hc => hc.EntityId, i => i, (hs, i) => hs) //Join too fast then [array].Contains()
+                //.Where(h => dmIds.Contains(h.EntityId))
+                .Select(h => new InternalDataHeighComponent() { MeasurementId = h.EntityId, Height = (h.Unit == DataStore.LengthUnit.Inch ? h.Value : h.Value * 39.37) })
+                .ToArray();
 
-                    //##################### WARNING #####################
-                    // We may use this code without LeftOuterJoin(), but it is to slow!!!
-                    //###################################################
-                    //foreach(var m in p.Measurements)
-                    //{
-                    //    var hComponent = dataStore.HeightComponents.FirstOrDefault(hc => hc.EntityId == m.MeasurementId);
-                    //    if (hComponent != null)
-                    //    {
-                    //        m.IsMissing &= hComponent.IsMissing;
-                    //        m.Height = (hComponent.Unit == DataStore.LengthUnit.Inch ? hComponent.Value : hComponent.Value * 39.37);
-                    //    }
-                    //    else
-                    //        m.IsMissing = true;
-
-                    //    var dComponent = dataStore.TimestampComponents.FirstOrDefault(dc => dc.EntityId == m.MeasurementId);
-                    //    if (dComponent != null)
-                    //    {
-                    //        m.IsMissing &= dComponent.IsMissing;
-                    //        m.Timestamp = dComponent.Timestamp;
-                    //    }
-                    //    else
-                    //        m.IsMissing = true;
-                    //}
-                }
-
-            //all needed data stored
+            data = d;
         }
 
         private Calculator calc = null;
@@ -134,7 +93,7 @@ namespace AnalysisModuleTaskX
                 throw new ArgumentNullException("data", "Need execute FetchData() first.");
             
             var result = (calc ?? (calc = new Calculator()))
-                .Calculate(data, CalculationType, ExcludeDoctorsWithotPacients, ExcludePacientsWithoutMeasurements);
+                .Calculate(data, CalculationType, CalculationTimeType, ExcludeDoctorsWithotPacients, ExcludePacientsWithoutMeasurements);
             
             foreach (var res in result)
                 AnalysisModule.MessageBus.Instance.PublishResult(res);
