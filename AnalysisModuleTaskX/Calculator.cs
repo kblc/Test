@@ -104,7 +104,7 @@ namespace AnalysisModuleTaskX
                         && !double.IsPositiveInfinity(h.Height)
                         && !double.IsNaN(h.Height)
                         ), 
-                    i => i.MeasurementId, hc => hc.MeasurementId, (i, hc) => new { i.DoctorId, i.PacientId, i.MeasurementId, i.Timestamp, Heigh = hc == null ? (double?)null : hc.Height })
+                    i => i.MeasurementId, hc => hc.MeasurementId, (i, hc) => new { i.DoctorId, i.PacientId, i.MeasurementId, i.Timestamp, Height = hc == null ? (double?)null : hc.Height })
                 .ToArray();
 
             //Table generated. Group data by Doctor, Pacient and Measurement
@@ -120,7 +120,7 @@ namespace AnalysisModuleTaskX
                         {
                             g2.FirstOrDefault().PacientId,
                             Measurements = g2
-                                .Where(i => i.Heigh != null && i.Timestamp != null)
+                                .Where(i => i.Height != null && i.Timestamp != null)
                                 .OrderBy(m => m.Timestamp)
                                 .ToArray()
                         })
@@ -137,8 +137,8 @@ namespace AnalysisModuleTaskX
                                     })
                                     .Select(i => new //Calc start and end measure data
                                     {
-                                        HeightStart = i.Start.Heigh.Value,
-                                        HeightEnd = i.End.Heigh.Value,
+                                        HeightStart = i.Start.Height.Value,
+                                        HeightEnd = i.End.Height.Value,
                                         TimestampStart = i.Start.Timestamp.Value,
                                         TimestampEnd = i.End.Timestamp.Value,
                                     })
