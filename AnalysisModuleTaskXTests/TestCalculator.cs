@@ -40,18 +40,18 @@ namespace AnalysisModuleTaskXTests
 
             data.Doctors.Add(doc);
             var res0 = Calc.Calculate(data, CalculationType.ByDoctor, excludeDoctorsWithoutPacients: false, excludePacientsWithoutMeasurements: false);
-            Assert.AreEqual(1, res0.Length, "res0 must contains 1 result");
+            Assert.AreEqual(1, res0.Count(), "res0 must contains 1 result");
             Assert.AreEqual(0d, res0.First().Result);
 
             var res1 = Calc.Calculate(data, CalculationType.ByDoctor, excludeDoctorsWithoutPacients: true, excludePacientsWithoutMeasurements: false);
-            Assert.AreEqual(0, res1.Length, "res1 must contains no result");
+            Assert.AreEqual(0, res1.Count(), "res1 must contains no result");
 
             data.Doctors.Add(new InternalDataDoctor() { DoctorId = 2 });
             var res2 = Calc.Calculate(data, CalculationType.ByDoctor, excludeDoctorsWithoutPacients: false, excludePacientsWithoutMeasurements: false);
-            Assert.AreEqual(2, res2.Length, "res2 must contains 2 result");
+            Assert.AreEqual(2, res2.Count(), "res2 must contains 2 result");
 
             var res3 = Calc.Calculate(data, CalculationType.ByDoctor, excludeDoctorsWithoutPacients: true, excludePacientsWithoutMeasurements: false);
-            Assert.AreEqual(0, res3.Length, "res3 must contains 0 result");
+            Assert.AreEqual(0, res3.Count(), "res3 must contains 0 result");
         }
 
         [TestMethod]
@@ -67,25 +67,25 @@ namespace AnalysisModuleTaskXTests
             data.Pacients.Add(pac1);
 
             var res0 = Calc.Calculate(data, CalculationType.ByDoctor, excludeDoctorsWithoutPacients: false, excludePacientsWithoutMeasurements: false);
-            Assert.AreEqual(1, res0.Length, "res0 must contains 1 result");
+            Assert.AreEqual(1, res0.Count(), "res0 must contains 1 result");
             Assert.AreEqual(0d, res0.First().Result, "result for res0 must equals 0");
 
             var res1 = Calc.Calculate(data, CalculationType.ByPacient, excludeDoctorsWithoutPacients: false, excludePacientsWithoutMeasurements: false);
-            Assert.AreEqual(2, res1.Length, "res1 must contains 2 result");
+            Assert.AreEqual(2, res1.Count(), "res1 must contains 2 result");
             Assert.AreEqual(0d, res1.Distinct().First().Result, "result for res1 must equals 0");
 
             var res2 = Calc.Calculate(data, CalculationType.ByPacient, excludeDoctorsWithoutPacients: false, excludePacientsWithoutMeasurements: true);
-            Assert.AreEqual(0, res2.Length, "res2 must contains 0 result");
+            Assert.AreEqual(0, res2.Count(), "res2 must contains 0 result");
 
             var res3 = Calc.Calculate(data, CalculationType.ByPacient, excludeDoctorsWithoutPacients: true, excludePacientsWithoutMeasurements: true);
-            Assert.AreEqual(0, res3.Length, "res3 must contains 2 result");
+            Assert.AreEqual(0, res3.Count(), "res3 must contains 2 result");
 
             data.Doctors.Add(new InternalDataDoctor() { DoctorId = 2 });
             var res4 = Calc.Calculate(data, CalculationType.ByDoctor, excludeDoctorsWithoutPacients: false, excludePacientsWithoutMeasurements: false);
-            Assert.AreEqual(2, res4.Length, "res4 must contains 2 result");
+            Assert.AreEqual(2, res4.Count(), "res4 must contains 2 result");
 
             var res5 = Calc.Calculate(data, CalculationType.ByDoctor, excludeDoctorsWithoutPacients: true, excludePacientsWithoutMeasurements: false);
-            Assert.AreEqual(1, res5.Length, "res5 must contains 1 result");
+            Assert.AreEqual(1, res5.Count(), "res5 must contains 1 result");
         }
 
         [TestMethod]
@@ -105,7 +105,7 @@ namespace AnalysisModuleTaskXTests
 
             var res0 = Calc.Calculate(data, CalculationType.ByDoctor, excludeDoctorsWithoutPacients: false, excludePacientsWithoutMeasurements: true);
             //pacient 0 with bad measurement (result should equals 0)
-            Assert.AreEqual(1, res0.Length, "res0 must contains 1 result");
+            Assert.AreEqual(1, res0.Count(), "res0 must contains 1 result");
             Assert.AreEqual(0d, res0.First().Result, "result for res0 must equals 0");
 
             var hc00 = new InternalDataHeighComponent() { MeasurementId = me00.MeasurementId, Height = 100 };
@@ -121,18 +121,18 @@ namespace AnalysisModuleTaskXTests
 
             var res1 = Calc.Calculate(data, CalculationType.ByDoctor, excludeDoctorsWithoutPacients: false, excludePacientsWithoutMeasurements: true);
             //pacient 0 with bad measurement (result should equals 0)
-            Assert.AreEqual(1, res1.Length, "res1 must contains 1 result");
+            Assert.AreEqual(1, res1.Count(), "res1 must contains 1 result");
             Assert.AreEqual(100d, res1.First().Result, "result for res1 must equals 100");
 
             //add one pacient without measurement
             data.Pacients.Add(pac1);
             var res2 = Calc.Calculate(data, CalculationType.ByDoctor, excludeDoctorsWithoutPacients: false, excludePacientsWithoutMeasurements: true);
-            Assert.AreEqual(1, res2.Length, "res2 must contains 1 result");
+            Assert.AreEqual(1, res2.Count(), "res2 must contains 1 result");
             Assert.AreEqual(100d, res2.First().Result, "result for res2 must equals 100");
 
             //if we calc 2 pacients (one without measurements) then result must be (100 - 0) / 2 = 50
             var res3 = Calc.Calculate(data, CalculationType.ByDoctor, excludeDoctorsWithoutPacients: false, excludePacientsWithoutMeasurements: false);
-            Assert.AreEqual(1, res3.Length, "res3 must contains 1 result");
+            Assert.AreEqual(1, res3.Count(), "res3 must contains 1 result");
             Assert.AreEqual(50d, res3.First().Result, "result for res3 must equals 50");
         }
 
@@ -149,7 +149,7 @@ namespace AnalysisModuleTaskXTests
             double start_height = 100;
             double height = start_height;
             var dt = DateTime.Now;
-            for (int i=0;i<100;i++)
+            for (int i=0; i<100; i++)
             {
                 var me = new InternalDataMeasurement() { PacientId = pac0.PacientId, MeasurementId = i };
                 var hc = new InternalDataHeighComponent() { MeasurementId = me.MeasurementId, Height = height };
@@ -159,7 +159,7 @@ namespace AnalysisModuleTaskXTests
                 data.HeighComponent.Add(hc);
                 data.Timestamps.Add(ts);
 
-                height += 100;
+                height += start_height;
                 dt = dt.AddDays(7);
             }
 

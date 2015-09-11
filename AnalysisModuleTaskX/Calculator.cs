@@ -68,7 +68,7 @@ namespace AnalysisModuleTaskX
         /// <param name="excludeDoctorsWithoutPacients">Excludes from result doctors with no one pacient</param>
         /// <param name="excludePacientsWithoutMeasurements">Excludes from result pacients with one or no one measuremtns</param>
         /// <returns>Calculation result</returns>
-        public AnalysisModule.SimpleCalculationResult[] Calculate(
+        public IEnumerable<AnalysisModule.SimpleCalculationResult> Calculate(
             InternalData data,
             CalculationType calcType = CalculationType.ByDoctor,
             CalculationTimeType calcTimeType = CalculationTimeType.PerWeek,
@@ -206,7 +206,7 @@ namespace AnalysisModuleTaskX
                         break;
                 }
             }
-            return res.ToArray();
+            return res;
         }
     }
 }

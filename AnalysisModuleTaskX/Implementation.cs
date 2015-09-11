@@ -60,28 +60,38 @@ namespace AnalysisModuleTaskX
             d.Doctors = dataStore.Entities
                 .Where(e => IsDoctor(e))
                 .Select(e => new InternalDataDoctor() { DoctorId = e.Id })
-                .ToArray();
+                .ToList();
             d.Pacients = dataStore.Relations
                 .Where(r => IsDoctor(r.Item1) && IsPacient(r.Item2))
                 .Select(r => new InternalDataPacient() { DoctorId = r.Item1.Id, PacientId = r.Item2.Id })
-                .ToArray();
+                .ToList();
             d.Measurements = dataStore.Relations
                 .Where(r => IsPacient(r.Item1) && IsMeasurement(r.Item2))
                 .Select(r => new InternalDataMeasurement() { PacientId = r.Item1.Id, MeasurementId = r.Item2.Id })
-                .ToArray();
-            var dmIds = d.Measurements.Select(m => m.MeasurementId).ToList();
+                .ToList();
+
+            //var dmIds = d.Measurements.Select(m => m.MeasurementId).ToArray();
+            var dmIds = d.Measurements.Select(m => m.MeasurementId).ToDictionary(m => m);
 
             d.Timestamps = dataStore.TimestampComponents
                 .Where(ts => !ts.IsMissing)
-                .Join(dmIds, tc => tc.EntityId, i => i, (ts, i) => ts) //Join too fast then [array].Contains()
-                //.Where(ts => dmIds.Contains(ts.EntityId))
-                .Select(ts => new InternalDataTimestamp() { MeasurementId = ts.EntityId, Timestamp = ts.Timestamp })
+                //.Join(dmIds, tc => tc.EntityId, i => i, (ts, i) => ts)
+                .Where(ts => dmIds.ContainsKey(ts.EntityId))
+                .Select(ts => new InternalDataTimestamp()
+                {
+                    MeasurementId = ts.EntityId,
+                    Timestamp = ts.Timestamp
+                })
                 .ToArray();
             d.HeighComponent = dataStore.HeightComponents
                 .Where(h => !h.IsMissing)
-                .Join(dmIds, hc => hc.EntityId, i => i, (hs, i) => hs) //Join too fast then [array].Contains()
-                //.Where(h => dmIds.Contains(h.EntityId))
-                .Select(h => new InternalDataHeighComponent() { MeasurementId = h.EntityId, Height = (h.Unit == DataStore.LengthUnit.Inch ? h.Value : h.Value * 39.37) })
+                //.Join(dmIds, hc => hc.EntityId, i => i, (hs, i) => hs)
+                .Where(h => dmIds.ContainsKey(h.EntityId))
+                .Select(h => new InternalDataHeighComponent()
+                {
+                    MeasurementId = h.EntityId,
+                    Height = (h.Unit == DataStore.LengthUnit.Inch ? h.Value : h.Value * 39.37) //Meters to inches
+                })
                 .ToArray();
 
             data = d;
