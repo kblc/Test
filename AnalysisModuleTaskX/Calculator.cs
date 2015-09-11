@@ -69,10 +69,10 @@ namespace AnalysisModuleTaskX
         /// <returns>Calculation result</returns>
         public AnalysisModule.SimpleCalculationResult[] Calculate(
             InternalData data,
-            CalculationType calcType,
-            CalculationTimeType calcTimeType,
-            bool excludeDoctorsWithoutPacients,
-            bool excludePacientsWithoutMeasurements)
+            CalculationType calcType = CalculationType.ByDoctor,
+            CalculationTimeType calcTimeType = CalculationTimeType.PerWeek,
+            bool excludeDoctorsWithoutPacients = false,
+            bool excludePacientsWithoutMeasurements = false)
         {
             if (data == null)
                 throw new ArgumentNullException("data");

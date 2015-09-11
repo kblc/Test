@@ -46,15 +46,19 @@ namespace AnalysisModuleTaskX
 
     public class InternalData
     {
-        /// <summary>
-        /// Doctors
-        /// </summary>
-        //public IEnumerable<InternalDataDoctor> Doctors { get; set; }
+        public InternalData()
+        {
+            Doctors = new List<InternalDataDoctor>();
+            Pacients = new List<InternalDataPacient>();
+            Measurements = new List<InternalDataMeasurement>();
+            Timestamps = new List<InternalDataTimestamp>();
+            HeighComponent = new List<InternalDataHeighComponent>();
+        }
 
-        public IEnumerable<InternalDataDoctor> Doctors { get; set; }
-        public IEnumerable<InternalDataPacient> Pacients { get; set; }
-        public IEnumerable<InternalDataMeasurement> Measurements { get; set; }
-        public IEnumerable<InternalDataTimestamp> Timestamps { get; set; }
-        public IEnumerable<InternalDataHeighComponent> HeighComponent { get; set; }
+        public IList<InternalDataDoctor> Doctors { get; set; }
+        public IList<InternalDataPacient> Pacients { get; set; }
+        public IList<InternalDataMeasurement> Measurements { get; set; }
+        public IList<InternalDataTimestamp> Timestamps { get; set; }
+        public IList<InternalDataHeighComponent> HeighComponent { get; set; }
     }
 }
