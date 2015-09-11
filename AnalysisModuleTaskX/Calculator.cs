@@ -25,7 +25,7 @@ namespace AnalysisModuleTaskX
         PerDay
     }
 
-    internal class Calculator
+    public class Calculator
     {
         /// <summary>
         /// Return time part for totalDays with selected calculation time type
@@ -64,18 +64,30 @@ namespace AnalysisModuleTaskX
         /// <param name="data">Internal data storage</param>
         /// <param name="calcType">Calculate average data by each doctor or by each doctor's pacient</param>
         /// <param name="calcTimeType">Calculate results by any part of year (year/month/week/day)</param>
-        /// <param name="excludeDoctorsWithotPacients">Excludes from result doctors with no one pacient</param>
+        /// <param name="excludeDoctorsWithoutPacients">Excludes from result doctors with no one pacient</param>
         /// <param name="excludePacientsWithoutMeasurements">Excludes from result pacients with one or no one measuremtns</param>
         /// <returns>Calculation result</returns>
-        internal AnalysisModule.SimpleCalculationResult[] Calculate(
+        public AnalysisModule.SimpleCalculationResult[] Calculate(
             InternalData data,
             CalculationType calcType,
             CalculationTimeType calcTimeType,
-            bool excludeDoctorsWithotPacients,
+            bool excludeDoctorsWithoutPacients,
             bool excludePacientsWithoutMeasurements)
         {
             if (data == null)
                 throw new ArgumentNullException("data");
+            if (data.Doctors == null)
+                throw new ArgumentNullException("data.Doctors", "Feel 'Doctors' array before calling Calculation");
+            if (data.Pacients == null)
+                throw new ArgumentNullException("data.Pacients", "Feel 'Pacients' array before calling Calculation");
+            if (data.Timestamps == null)
+                throw new ArgumentNullException("data.Timestamps", "Feel 'Timestamps' array before calling Calculation");
+            if (data.Measurements == null)
+                throw new ArgumentNullException("data.Measurements", "Feel 'Measurements' array before calling Calculation");
+            if (data.HeighComponent == null)
+                throw new ArgumentNullException("data.HeighComponent", "Feel 'HeighComponent' array before calling Calculation");
+            if (!data.Doctors.Any())
+                throw new ArgumentException("You must feel doctors array before calling Calculation", "data.Doctors");
 
             var res = new List<AnalysisModule.SimpleCalculationResult>();
 
@@ -150,11 +162,13 @@ namespace AnalysisModuleTaskX
                 .Select(i => new
                     {
                         i.DoctorId,
-                        Pacients = i.Pacients.Where(n => !excludePacientsWithoutMeasurements || n.MeasurementsExists)
-                        .ToArray()
+                        Pacients = i.Pacients
+                            .Where(p => p.PacientId != null)
+                            .Where(n => !excludePacientsWithoutMeasurements || n.MeasurementsExists)
+                            .ToArray()
                     })
                 //Exclude from data doctors without pacients (is setted)
-                .Where(i => !excludeDoctorsWithotPacients || i.Pacients.Any())
+                .Where(i => !excludeDoctorsWithoutPacients || i.Pacients.Any())
                 .ToArray()
                 ;
 

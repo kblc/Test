@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AnalysisModuleTaskX
 {
-    internal class InternalDataPacient
+    public class InternalDataPacient
     {
         /// <summary>
         /// Pacient identifier
@@ -18,7 +18,7 @@ namespace AnalysisModuleTaskX
         public long DoctorId { get; set; }
     }
 
-    internal class InternalDataDoctor
+    public class InternalDataDoctor
     {
         /// <summary>
         /// Doctor identifier
@@ -26,25 +26,25 @@ namespace AnalysisModuleTaskX
         public long DoctorId { get; set; }
     }
 
-    internal class InternalDataTimestamp
+    public class InternalDataTimestamp
     {
         public long MeasurementId { get; set; }
         public DateTime Timestamp { get; set; }
     }
 
-    internal class InternalDataHeighComponent
+    public class InternalDataHeighComponent
     {
         public long MeasurementId { get; set; }
         public double Height { get; set; }
     }
 
-    internal class InternalDataMeasurement
+    public class InternalDataMeasurement
     {
         public long MeasurementId { get; set; }
         public long PacientId { get; set; }
     }
 
-    internal class InternalData
+    public class InternalData
     {
         /// <summary>
         /// Doctors
