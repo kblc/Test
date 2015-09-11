@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
 
+// git repository: https://github.com/kblc/Test
 namespace AnalysisModuleTaskX
 {
     public class JoinedEnumerable<T> : IEnumerable<T>

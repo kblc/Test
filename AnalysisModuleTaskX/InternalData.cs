@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+// git repository: https://github.com/kblc/Test
 namespace AnalysisModuleTaskX
 {
     public class InternalDataPacient

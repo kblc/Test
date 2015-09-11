@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AnalysisModuleTaskX;
 using System.Linq;
 
+// git repository: https://github.com/kblc/Test
 namespace AnalysisModuleTaskXTests
 {
     [TestClass]

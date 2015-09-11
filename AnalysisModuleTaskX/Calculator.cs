@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 
+// git repository: https://github.com/kblc/Test
 namespace AnalysisModuleTaskX
 {
     public enum CalculationType
